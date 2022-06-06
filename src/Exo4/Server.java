@@ -14,7 +14,6 @@ public class Server {
         try{
             while(!serverSocket.isClosed()){
                 Socket socket = serverSocket.accept(); // Blocant attend qu'un client se connect
-                verify_connection();
                 System.out.println(" A new client has connected !");
                 ClientHandler clienthandler = new ClientHandler(socket);
                 Thread thread = new Thread(clienthandler);

@@ -9,9 +9,10 @@ public class Client {
     private BufferedReader bufferedReader;
     private BufferedWriter bufferedWriter;
     private String username;
+    private String password;
 
 
-    public Client (Socket socket , String username){
+    public Client (Socket socket , String username, String password){
         try{
             this.socket = socket;
             this.bufferedWriter = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
@@ -78,14 +79,20 @@ public class Client {
         }
     }
 
+
+
     public static void main(String[] args) throws IOException {
 
         Scanner scanner = new Scanner(System.in);
         System.out.println("Enter your username for the group chat : ");
         String username = scanner.nextLine();
 
+        Scanner scanner2 = new Scanner(System.in);
+        System.out.println("Enter your password for the group chat : ");
+        String password = scanner2.nextLine();
+
         Socket socket = new Socket("LocalHost", 1234);
-        Client client = new Client(socket, username);
+        Client client = new Client(socket, username ,password);
         client.listenForMessage();
         client.sendMessage();
     }

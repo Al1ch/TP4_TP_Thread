@@ -1,4 +1,4 @@
-package Exo1;
+package Exo3;
 import java.util.*;
 
 public class Compte extends Thread{

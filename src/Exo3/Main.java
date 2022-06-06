@@ -1,4 +1,4 @@
-package Exo1;
+package Exo3;
 import Exo3.Employe;
 
 import java.lang.Thread;
@@ -13,8 +13,8 @@ public class Main {
          List <Employe> liste_employe = new ArrayList<>();
 
         Employe e1 = new Employe(1, "serveur", 100);
-        Employe e2 = new Employe(1, "serveur", 200);
-        Employe e3 = new Employe(1, "serveur", 300);
+        Employe e2 = new Employe(2, "banquier", 200);
+        Employe e3 = new Employe(3, "Foudroyeur", 300);
 
 
         liste_employe.add(e1);
@@ -26,6 +26,7 @@ public class Main {
                 .average()
                 .orElse(0);
         System.out.println(salaire_moyen);
+
 
     }
 

@@ -4,6 +4,8 @@ import java.io.*;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.io.BufferedReader;
+import java.util.concurrent.ExecutionException;
 
 public class ClientHandler implements Runnable{
 
@@ -12,6 +14,7 @@ public class ClientHandler implements Runnable{
     private BufferedReader bufferedReader;
     private BufferedWriter bufferedWriter;
     private String clientUsername;
+    private int nbe_client_connecter;
     private String clientPassword;
 
     public ClientHandler(Socket socket){
@@ -30,16 +33,32 @@ public class ClientHandler implements Runnable{
     @Override
     public void run(){
         String messageFromClient;
-
-        while(socket.isConnected()){
-            try{
-                messageFromClient = bufferedReader.readLine(); //il va lire les message envoyer par le client à chaque fois
-                broadcastMessage(messageFromClient); // il va écrire dans le buffer de chaque client qu'ils vont ensuite lire
-            }catch (IOException e){
-                closeEverything(socket , bufferedReader , bufferedWriter);
-                break;
+        if(verify_authentification(this.clientUsername)){
+            while(socket.isConnected()){
+                try{
+                    messageFromClient = bufferedReader.readLine(); //il va lire les message envoyer par le client à chaque fois
+                    broadcastMessage(messageFromClient); // il va écrire dans le buffer de chaque client qu'ils vont ensuite lire
+                }catch (IOException e){
+                    closeEverything(socket , bufferedReader , bufferedWriter);
+                    break;
+                }
             }
         }
+        else{
+            for(ClientHandler clientHandler :clientHandlers){
+                try{
+                    if(clientHandler.clientUsername.equals(clientUsername)){
+                        clientHandler.bufferedWriter.write("Erreur d'authentification il n'y a pas de username sous ce nom");
+                        clientHandler.bufferedWriter.newLine();
+                        clientHandler.bufferedWriter.flush();
+                    }
+                }
+                catch (IOException e){
+                    closeEverything(socket,bufferedReader, bufferedWriter);
+                }
+            }
+        }
+
     }
 
     public void broadcastMessage(String messageToSend){
@@ -63,21 +82,39 @@ public class ClientHandler implements Runnable{
     }
 
     public void closeEverything(Socket socket, BufferedReader bufferedReader , BufferedWriter bufferedWriter){
-            removeClientHandler();
-            try{
-                if(bufferedReader != null){
-                    bufferedReader.close();
-                }
-                if(bufferedWriter != null){
-                    bufferedWriter.close();
-                }
-                if(socket!= null){
-                    socket.close();
-                }
+        removeClientHandler();
+        try{
+            if(bufferedReader != null){
+                bufferedReader.close();
             }
-            catch(IOException e ){
-                e.printStackTrace();
+            if(bufferedWriter != null){
+                bufferedWriter.close();
             }
+            if(socket!= null){
+                socket.close();
+            }
+        }
+        catch(IOException e ){
+            e.printStackTrace();
+        }
     }
+    public static boolean verify_authentification(String username){
+        String thisLine;
+        try{
+            BufferedReader br = new BufferedReader(new FileReader("D:/EFREI 2021-2022/Semestre 6/TP JAVA/TP4_Thread/src/Exo4/authentification.txt"));
+            while ((thisLine = br.readLine()) != null) {
+
+                if(thisLine.equals(username)){
+                    System.out.println("CONNECTION ACCORDER");
+                    return true;
+                }
+
+            }
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+        return false;
+    }
+
 
 }
