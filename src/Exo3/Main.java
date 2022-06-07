@@ -14,7 +14,7 @@ public class Main {
 
         Employe e1 = new Employe(1, "serveur", 100);
         Employe e2 = new Employe(2, "banquier", 200);
-        Employe e3 = new Employe(3, "Foudroyeur", 300);
+        Employe e3 = new Employe(3, "influenceur", 300);
 
 
         liste_employe.add(e1);
